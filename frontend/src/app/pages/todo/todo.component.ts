@@ -5,6 +5,8 @@ import { TodoService } from '../../core/services/todo.service';
 import { SlidePanelComponent } from '../../shared/ui/slide-panel/slide-panel.component';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule, NgIf } from '@angular/common';
+import { formatDate } from '@angular/common';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-todo',
@@ -74,7 +76,12 @@ export class TodoComponent implements OnInit {
         });
       } else {
         // Add new todo
-        this.todoService.addTodo(this.todoForm.value).subscribe({
+        const newTodo: ITodo = {
+          ...this.todoForm.value,
+          created_at: new Date().toISOString(),
+          updated_at: null
+        };
+        this.todoService.addTodo(newTodo).subscribe({
           next: () => {
             this.getAllTodos();
             this.onCloseSlidePanel();
@@ -85,6 +92,7 @@ export class TodoComponent implements OnInit {
       this.todoForm.markAllAsTouched();
     }
   }
+
 
   onLoadTodoForm(item: ITodo) {
     this.todoId = item.id; // Ensure this is the MongoDB ObjectId

@@ -102,7 +102,8 @@ app.post('/api/todos', authenticate, async (req, res) => {
       title,
       description,
       status,
-      userId: req.user.userId, // Associate the todo with the authenticated user
+      userId: req.user.userId,
+      created_at: new Date(), // Set created_at only during creation
     });
     await newTodo.save();
     res.status(201).json(newTodo);
@@ -111,6 +112,7 @@ app.post('/api/todos', authenticate, async (req, res) => {
     res.status(500).json({ message: 'Failed to create todo' });
   }
 });
+
 
 app.get('/api/todos', authenticate, async (req, res) => {
   try {
@@ -122,27 +124,25 @@ app.get('/api/todos', authenticate, async (req, res) => {
   }
 });
 
-app.put('/api/todos/:id', authenticate, async (req, res) => {
-  const { id } = req.params;
+app.post('/api/todos', authenticate, async (req, res) => {
   const { title, description, status } = req.body;
-  
   try {
-    const todo = await Todo.findOneAndUpdate(
-      { _id: id, userId: req.user.userId }, // Ensure the todo belongs to the authenticated user
-      { title, description, status, updated_at: Date.now() },
-      { new: true, runValidators: true } // Return the updated todo and run Mongoose validators
-    );
-    
-    if (!todo) {
-      return res.status(404).json({ message: 'Todo not found or user unauthorized' });
-    }
-    
-    res.status(200).json(todo);
+    const newTodo = new Todo({
+      title,
+      description,
+      status,
+      userId: req.user.userId,
+      created_at: new Date(), // Set created_at only during creation
+    });
+    await newTodo.save();
+    res.status(201).json(newTodo);
   } catch (error) {
-    console.error('Updating Todo Error:', error);
-    res.status(500).json({ message: 'Failed to update todo' });
+    console.error('Todo Creation Error:', error);
+    res.status(500).json({ message: 'Failed to create todo' });
   }
 });
+
+
 
 
 

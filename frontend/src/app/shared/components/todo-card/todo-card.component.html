@@ -3,6 +3,9 @@
     [class]="{'border-gray-200': todo.status === 'OPEN','border-blue-100': todo.status === 'PROGRESS', 'border-red-200': todo.status === 'TESTING', 'border-green-200': todo.status === 'DONE'}">
     <h4 class="font-bold">{{todo.title}}</h4>
     <p class="text-gray-400 h-6 overflow-y-hidden">{{todo.description}}</p>
+    <p class="text-gray-400 text-sm">
+      {{ todo.updated_at && todo.updated_at !== todo.created_at ? 'Updated: ' + (todo.updated_at | date:'short') : 'Created: ' + (todo.created_at | date:'short') }}
+    </p>
   </div>
   <div>
     @if (type === 'OPEN') {

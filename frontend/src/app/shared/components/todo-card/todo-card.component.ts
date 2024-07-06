@@ -1,5 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { ITodo } from '../../../core/models/todo.model';
+import { DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 export type ITodoType='OPEN' | 'PROGRESS' | 'TESTING' | 'DONE';
 export const ITodoStatus=['OPEN', 'PROGRESS', 'TESTING', 'DONE'];
@@ -7,7 +9,7 @@ export const ITodoStatus=['OPEN', 'PROGRESS', 'TESTING', 'DONE'];
 @Component({
   selector: 'app-todo-card',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './todo-card.component.html',
   styleUrl: './todo-card.component.scss'
 })
