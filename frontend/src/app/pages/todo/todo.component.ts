@@ -14,11 +14,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { NgFor } from '@angular/common';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-todo',
   standalone: true,
-  imports: [TodoCardComponent, SlidePanelComponent, ReactiveFormsModule, NgFor],
+  imports: [TodoCardComponent, SlidePanelComponent, ReactiveFormsModule, NgFor, NgIf],
   templateUrl: './todo.component.html',
   styleUrl: './todo.component.scss',
 })
@@ -58,9 +59,11 @@ export class TodoComponent implements OnInit {
   openSlidePanel() {
     this.isSlidePanelOpen = true;
   }
-
+  
   onCloseSlidePanel() {
     this.isSlidePanelOpen = false;
+    this.todoId = null; // Reset todoId when closing
+    this.todoForm.reset({ status: 'OPEN' }); // Reset form when closing
   }
 
   onFilterByStatus(status: string) {
@@ -68,13 +71,14 @@ export class TodoComponent implements OnInit {
     this.getAllTodos();
   }
 
+
   onSubmit() {
+    console.log('Form Submission', this.todoForm.value); // Log form data
+    console.log('Current Todo ID:', this.todoId); // Log current todoId
+  
     if (this.todoForm.valid) {
       if (this.todoId) {
-        console.log('Updating todo with ID:', this.todoId); // Log the ID
-        this.todoService
-          .updateTodo(this.todoId, this.todoForm.value)
-          .subscribe({
+        this.todoService.updateTodo(this.todoId, this.todoForm.value).subscribe({
           next: () => {
             this.getAllTodos();
             this.onCloseSlidePanel();
@@ -98,9 +102,27 @@ export class TodoComponent implements OnInit {
       this.todoForm.markAllAsTouched();
     }
   }
+  
+  onDelete() {
+    console.log('Deleting todo with ID:', this.todoId); // Log the delete action
+  
+    if (this.todoId) {
+      this.todoService.deleteTodo(this.todoId).subscribe({
+        next: () => {
+          this.getAllTodos();
+          this.onCloseSlidePanel();
+        },
+        error: (error) => {
+          console.error('Error deleting todo:', error);
+        }
+      });
+    }
+  }
+  
 
   onLoadTodoForm(item: ITodo) {
     this.todoId = item.id!!; // Use id for MongoDB
+    console.log('Loading todo with ID:', this.todoId); // Log the ID
     this.todoForm.patchValue({
       title: item.title,
       description: item.description,
@@ -108,5 +130,4 @@ export class TodoComponent implements OnInit {
     });
     this.openSlidePanel();
   }
-  
 }

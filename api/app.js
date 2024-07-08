@@ -158,9 +158,25 @@ app.put('/api/todo/:id', authenticate, async (req, res) => {
   }
 });
 
+// Todo delete route
+app.delete('/api/todo/:id', authenticate, async (req, res) => {
+  const { id } = req.params; // Extract the id from params
 
+  try {
+    console.log('Deleting todo with ID:', id); // Log the ID to debug
+    const todo = await Todo.findOneAndDelete({ _id: id, userId: req.user.userId }); // Ensure both _id and userId match
 
+    if (!todo) {
+      console.log('Todo not found or user unauthorized');
+      return res.status(404).json({ message: 'Todo not found or user unauthorized' });
+    }
 
+    res.status(200).json({ message: 'Todo deleted successfully' });
+  } catch (error) {
+    console.error('Deleting Todo Error:', error);
+    res.status(500).json({ message: 'Failed to delete todo' });
+  }
+});
 
 
 app.listen(PORT, () => {

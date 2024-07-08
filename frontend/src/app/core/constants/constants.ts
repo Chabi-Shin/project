@@ -14,6 +14,7 @@ export const apiEndpoint = {
   TodoEndpoint: {
     getAllTodo: `${apiurl}/todo`,              
     addTodo: `${apiurl}/todo`,                 
-    updateTodo: `${apiurl}/todo/:id`,          
+    updateTodo: `${apiurl}/todo/:id`, 
+    deleteTodo: `${apiurl}/todo/:id`,         
   },
 };
