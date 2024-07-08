@@ -87,7 +87,7 @@ const authenticate = (req, res, next) => {
   }
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
-    req.user = decoded;
+    req.user = decoded; // Ensure this is correctly setting the user
     next();
   } catch (error) {
     res.status(400).json({ message: 'Invalid token' });
@@ -95,36 +95,27 @@ const authenticate = (req, res, next) => {
 };
 
 // Todo routes
-app.post('/api/todos', authenticate, async (req, res) => {
-  const { title, description, status } = req.body;
-  try {
-    const newTodo = new Todo({
-      title,
-      description,
-      status,
-      userId: req.user.userId,
-      created_at: new Date(), // Set created_at only during creation
-    });
-    await newTodo.save();
-    res.status(201).json(newTodo);
-  } catch (error) {
-    console.error('Todo Creation Error:', error);
-    res.status(500).json({ message: 'Failed to create todo' });
+
+//todo display route
+app.get('/api/todo', authenticate, async (req, res) => {
+  const { status } = req.query;
+  const query = { userId: req.user.userId };
+
+  if (status) {
+    query.status = status;
   }
-});
 
-
-app.get('/api/todos', authenticate, async (req, res) => {
   try {
-    const todos = await Todo.find({ userId: req.user.userId }); // Fetch todos for the authenticated user
-    res.status(200).json(todos);
+    const todos = await Todo.find(query);
+    res.status(200).json({ data: todos });
   } catch (error) {
     console.error('Fetching Todos Error:', error);
     res.status(500).json({ message: 'Failed to fetch todos' });
   }
 });
 
-app.post('/api/todos', authenticate, async (req, res) => {
+//Todo adding route
+app.post('/api/todo', authenticate, async (req, res) => {
   const { title, description, status } = req.body;
   try {
     const newTodo = new Todo({
@@ -142,23 +133,35 @@ app.post('/api/todos', authenticate, async (req, res) => {
   }
 });
 
+//Todo update route
+app.put('/api/todo/:id', authenticate, async (req, res) => {
+  const { id } = req.params; // Extract the id from params
+  const { title, description, status } = req.body; // Extract updated fields from request body
 
-
-
-
-app.delete('/api/todos/:id', authenticate, async (req, res) => {
-  const { id } = req.params;
   try {
-    const todo = await Todo.findOneAndDelete({ _id: id, userId: req.user.userId }); // Ensure the todo belongs to the authenticated user
+    console.log('Updating todo with ID:', id); // Log the ID to debug
+    const todo = await Todo.findOneAndUpdate(
+      { _id: id, userId: req.user.userId }, // Ensure both _id and userId match
+      { title, description, status, updated_at: new Date() }, // Set the fields to update
+      { new: true, runValidators: true } // Return the updated document
+    );
+
     if (!todo) {
-      return res.status(404).json({ message: 'Todo not found' });
+      console.log('Todo not found or user unauthorized');
+      return res.status(404).json({ message: 'Todo not found or user unauthorized' });
     }
-    res.status(200).json({ message: 'Todo deleted successfully' });
+
+    res.status(200).json(todo);
   } catch (error) {
-    console.error('Deleting Todo Error:', error);
-    res.status(500).json({ message: 'Failed to delete todo' });
+    console.error('Updating Todo Error:', error);
+    res.status(500).json({ message: 'Failed to update todo' });
   }
 });
+
+
+
+
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

@@ -6,10 +6,10 @@ export interface IResponse<T> {
   }
 
 export interface ITodo{
-    id:string;
+    id?:string;
     title: string;
     description: string;
     status: ITodoType;
-    created_at: string;
-    updated_at: string;
+    created_at?: string;
+    updated_at?: string;
 }
