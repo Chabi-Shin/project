@@ -16,6 +16,7 @@ import {
 import { NgFor } from '@angular/common';
 import { NgIf } from '@angular/common';
 
+
 @Component({
   selector: 'app-todo',
   standalone: true,
@@ -100,6 +101,14 @@ export class TodoComponent implements OnInit {
       }
     } else {
       this.todoForm.markAllAsTouched();
+    }
+  }
+
+
+  confirmDelete() {
+    const confirmed = window.confirm('Are you sure you want to delete this todo?');
+    if (confirmed) {
+      this.onDelete();
     }
   }
   

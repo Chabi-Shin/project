@@ -63,7 +63,7 @@
 
     <div class="mt-6 flex justify-between">
       <button type="submit" class="btn btn-primary" [disabled]="todoForm.invalid">Save</button>
-      <button *ngIf="todoId" type="button" class="btn btn-danger" (click)="onDelete()">Delete</button>
+      <button *ngIf="todoId" type="button" class="btn btn-danger" (click)="confirmDelete()">Delete</button>
     </div>
   </form>
 </app-slide-panel>
