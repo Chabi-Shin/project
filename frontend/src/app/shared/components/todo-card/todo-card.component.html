@@ -8,6 +8,9 @@
     }">
     <h4 class="font-bold">{{ todo.title }}</h4>
     <p class="text-gray-400 h-6 overflow-y-hidden">{{ todo.description }}</p>
+    <p class="text-gray-400 text-sm">
+      {{ 'Created: ' + (todo.created_at | date:'short') }}
+    </p>
   </div>
   <div>
     <div *ngIf="type === 'OPEN'" class="bg-gray-100 border border-gray-500 text-gray-600 text-xs font-medium p-1 px-2 rounded-full">{{ type }}</div>
