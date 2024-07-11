@@ -7,8 +7,8 @@ export interface IResponse<T> {
 }
 
 export interface ITodo {
-  id?: string; // Add the `id` property
-  _id?: string; // Add the `_id` property for MongoDB
+  id?: string; // `id` property
+  _id?: string; // `_id` property for MongoDB
   title: string;
   description: string;
   status: ITodoType;

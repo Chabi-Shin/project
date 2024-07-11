@@ -10,9 +10,10 @@ import { apiEndpoint } from '../constants/constants';
   providedIn: 'root',
 })
 export class TodoService {
-  private baseUrl = 'http://localhost:8000/api/todo';
+  private baseUrl = 'http://localhost:8000/api/todo'; //Url as a variable
   constructor(private http: HttpClient) {}
-
+  
+  //Todos displaying 
   getAllTodo(status: string): Observable<IResponse<ITodo[]>> {
     let queryString = '';
     if (status !== '') {
@@ -34,23 +35,27 @@ export class TodoService {
       })
     );
   }
-
+  
+  //Todo adding 
   addTodo(data: ITodo): Observable<IResponse<ITodo>> {
     return this.http.post<IResponse<ITodo>>(apiEndpoint.TodoEndpoint.addTodo, data);
   }
 
+  //Todo deleting 
   deleteTodo(id: string): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${id}`).pipe(
       catchError(this.handleError)
     );
   }
 
+  //Todo updating 
   updateTodo(id: string, todo: ITodo): Observable<any> {
     return this.http.put(`${this.baseUrl}/${id}`, todo).pipe(
       catchError(this.handleError)
     );
   }
 
+  //For all errors
   private handleError(error: any) {
     console.error('Error:', error);
     return throwError(error);

@@ -4,8 +4,8 @@ const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
-const Todo = require('./todo');  // Import the Todo model
-const User = require('./db/User');  // Import the User model
+const Todo = require('./todo');  // Imports the Todo model
+const User = require('./db/User');  // Imports the User model
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -38,7 +38,7 @@ app.post('/api/register', async (req, res) => {
     const newUser = new User({ email, password: hashedPassword });
     await newUser.save();
 
-    // Retrieve the user from the database right after saving to check the saved password
+    // Retrieves the user from the database right after saving to check the saved password
     const savedUser = await User.findOne({ email });
     console.log(`Hashed password saved in database: ${savedUser.password}`);
     
@@ -87,7 +87,7 @@ const authenticate = (req, res, next) => {
   }
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
-    req.user = decoded; // Ensure this is correctly setting the user
+    req.user = decoded; // Ensures this is correctly setting the user
     next();
   } catch (error) {
     res.status(400).json({ message: 'Invalid token' });
@@ -123,7 +123,7 @@ app.post('/api/todo', authenticate, async (req, res) => {
       description,
       status,
       userId: req.user.userId,
-      created_at: new Date(), // Set created_at only during creation
+      created_at: new Date(), // Sets created_at only during creation
     });
     await newTodo.save();
     res.status(201).json(newTodo);
@@ -135,15 +135,15 @@ app.post('/api/todo', authenticate, async (req, res) => {
 
 //Todo update route
 app.put('/api/todo/:id', authenticate, async (req, res) => {
-  const { id } = req.params; // Extract the id from params
-  const { title, description, status } = req.body; // Extract updated fields from request body
+  const { id } = req.params; // Extracts the id from params
+  const { title, description, status } = req.body; // Extracts updated fields from request body
 
   try {
-    console.log('Updating todo with ID:', id); // Log the ID to debug
+    console.log('Updating todo with ID:', id); // Logs the ID to debug
     const todo = await Todo.findOneAndUpdate(
-      { _id: id, userId: req.user.userId }, // Ensure both _id and userId match
-      { title, description, status, updated_at: new Date() }, // Set the fields to update
-      { new: true, runValidators: true } // Return the updated document
+      { _id: id, userId: req.user.userId }, // Ensures both _id and userId match
+      { title, description, status, updated_at: new Date() }, // Sets the fields to update
+      { new: true, runValidators: true } // Returns the updated document
     );
 
     if (!todo) {
@@ -160,11 +160,11 @@ app.put('/api/todo/:id', authenticate, async (req, res) => {
 
 // Todo delete route
 app.delete('/api/todo/:id', authenticate, async (req, res) => {
-  const { id } = req.params; // Extract the id from params
+  const { id } = req.params; // Extracts the id from params
 
   try {
-    console.log('Deleting todo with ID:', id); // Log the ID to debug
-    const todo = await Todo.findOneAndDelete({ _id: id, userId: req.user.userId }); // Ensure both _id and userId match
+    console.log('Deleting todo with ID:', id); // Logs the ID to debug
+    const todo = await Todo.findOneAndDelete({ _id: id, userId: req.user.userId }); // Ensures both _id and userId match
 
     if (!todo) {
       console.log('Todo not found or user unauthorized');

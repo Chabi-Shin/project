@@ -41,6 +41,7 @@ export class TodoComponent implements OnInit {
     this.getAllTodos();
   }
 
+  //Todo displaying function
   getAllTodos() {
     this.todoService.getAllTodo(this.filterByStatus).subscribe({
       next: (response) => {
@@ -52,24 +53,29 @@ export class TodoComponent implements OnInit {
     });
   }
 
+  //Open Slide panel on click
   openSlidePanel() {
     this.isSlidePanelOpen = true;
   }
 
+  //Close slide panel
   onCloseSlidePanel() {
     this.isSlidePanelOpen = false;
     this.todoId = null;
     this.todoForm.reset({ status: 'OPEN' });
   }
 
+  //function for filtering by status
   onFilterByStatus(status: string) {
     this.filterByStatus = status;
     this.getAllTodos();
   }
 
+  //Function for adding or updating todos
   onSubmit() {
     if (this.todoForm.valid) {
       if (this.todoId) {
+        //If the tasks already exists, update
         this.todoService.updateTodo(this.todoId, this.todoForm.value).subscribe({
           next: () => {
             this.getAllTodos();
@@ -81,6 +87,7 @@ export class TodoComponent implements OnInit {
           }
         });
       } else {
+        //Otherwise, add
         this.todoService.addTodo(this.todoForm.value).subscribe({
           next: () => {
             this.getAllTodos();
@@ -97,6 +104,7 @@ export class TodoComponent implements OnInit {
     }
   }
 
+  //Popup message
   confirmDelete() {
     const confirmed = window.confirm('Are you sure you want to delete this todo?');
     if (confirmed) {
@@ -104,6 +112,7 @@ export class TodoComponent implements OnInit {
     }
   }
 
+  //Deleting function
   onDelete() {
     if (this.todoId) {
       this.todoService.deleteTodo(this.todoId).subscribe({
@@ -119,6 +128,7 @@ export class TodoComponent implements OnInit {
     }
   }
 
+  //On clicking on task, the info appear in the form
   onLoadTodoForm(item: ITodo) {
     this.todoId = item.id!!;
     this.todoForm.patchValue({

@@ -12,9 +12,9 @@ export const apiEndpoint = {
     loggedUser: `${apiurl}/user`,
   },
   TodoEndpoint: {
-    getAllTodo: `${apiurl}/todo`,              
-    addTodo: `${apiurl}/todo`,                 
-    updateTodo: `${apiurl}/todo/:id`, 
-    deleteTodo: `${apiurl}/todo/:id`,         
+    getAllTodo: `${apiurl}/todo`,    //Correct route          
+    addTodo: `${apiurl}/todo`,   //Correct route              
+    updateTodo: `${apiurl}/todo/:id`, //Correct route
+    deleteTodo: `${apiurl}/todo/:id`,  //Correct route       
   },
 };
