@@ -7,6 +7,10 @@
     </button>
   </div>
 
+  <div *ngIf="message$ | async as message" class="notification">
+    {{ message }}
+  </div>
+
   <div class="mt-4 inline-flex gap-2">
     <button class="btn btn-sm btn-outline-primary" [class]="{'btn-primary': filterByStatus === ''}"
       (click)="onFilterByStatus('')">ALL</button>
@@ -67,3 +71,19 @@
     </div>
   </form>
 </app-slide-panel>
+
+<style>
+  .notification {
+    background-color: #28a745;
+    color: white;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    animation: fadeOut 3s forwards;
+  }
+
+  @keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; display: none; }
+  }
+</style>

@@ -1,11 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  ITodoStatus,
-  TodoCardComponent,
-} from '../../shared/components/todo-card/todo-card.component';
-import { TodoService } from '../../core/services/todo.service';
-import { ITodo } from '../../core/models/todo.model';
-import { SlidePanelComponent } from '../../shared/ui/slide-panel/slide-panel.component';
+import { CommonModule } from '@angular/common'; // Import CommonModule
 import {
   FormBuilder,
   FormControl,
@@ -13,14 +7,16 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { NgFor } from '@angular/common';
-import { NgIf } from '@angular/common';
-
+import { ITodoStatus, TodoCardComponent } from '../../shared/components/todo-card/todo-card.component';
+import { TodoService } from '../../core/services/todo.service';
+import { ITodo } from '../../core/models/todo.model';
+import { SlidePanelComponent } from '../../shared/ui/slide-panel/slide-panel.component';
+import { NotificationService } from '../../core/services/notifications.service';
 
 @Component({
   selector: 'app-todo',
   standalone: true,
-  imports: [TodoCardComponent, SlidePanelComponent, ReactiveFormsModule, NgFor, NgIf],
+  imports: [CommonModule, TodoCardComponent, SlidePanelComponent, ReactiveFormsModule], // Add CommonModule here
   templateUrl: './todo.component.html',
   styleUrl: './todo.component.scss',
 })
@@ -31,7 +27,9 @@ export class TodoComponent implements OnInit {
   isSlidePanelOpen = false;
   todoId: string | null = null;
   filterByStatus = '';
-  constructor(private todoService: TodoService, private fb: FormBuilder) {
+  message$ = this.notificationService.getMessage();
+
+  constructor(private todoService: TodoService, private fb: FormBuilder, private notificationService: NotificationService) {
     this.todoForm = this.fb.group({
       title: new FormControl('', [Validators.required]),
       description: new FormControl('', [Validators.required]),
@@ -43,13 +41,10 @@ export class TodoComponent implements OnInit {
     this.getAllTodos();
   }
 
-
   getAllTodos() {
     this.todoService.getAllTodo(this.filterByStatus).subscribe({
       next: (response) => {
-        console.log('Received todos:', response);
-        this.todos = response.data; // Ensure this updates the component view
-        // Manually trigger change detection if necessary
+        this.todos = response.data;
       },
       error: (error) => {
         console.error('Error fetching todos:', error);
@@ -60,11 +55,11 @@ export class TodoComponent implements OnInit {
   openSlidePanel() {
     this.isSlidePanelOpen = true;
   }
-  
+
   onCloseSlidePanel() {
     this.isSlidePanelOpen = false;
-    this.todoId = null; // Reset todoId when closing
-    this.todoForm.reset({ status: 'OPEN' }); // Reset form when closing
+    this.todoId = null;
+    this.todoForm.reset({ status: 'OPEN' });
   }
 
   onFilterByStatus(status: string) {
@@ -72,17 +67,14 @@ export class TodoComponent implements OnInit {
     this.getAllTodos();
   }
 
-
   onSubmit() {
-    console.log('Form Submission', this.todoForm.value); // Log form data
-    console.log('Current Todo ID:', this.todoId); // Log current todoId
-  
     if (this.todoForm.valid) {
       if (this.todoId) {
         this.todoService.updateTodo(this.todoId, this.todoForm.value).subscribe({
           next: () => {
             this.getAllTodos();
             this.onCloseSlidePanel();
+            this.notificationService.showMessage('Task updated');
           },
           error: (error) => {
             console.error('Error updating todo:', error);
@@ -93,6 +85,7 @@ export class TodoComponent implements OnInit {
           next: () => {
             this.getAllTodos();
             this.onCloseSlidePanel();
+            this.notificationService.showMessage('Task created');
           },
           error: (error) => {
             console.error('Error adding todo:', error);
@@ -104,22 +97,20 @@ export class TodoComponent implements OnInit {
     }
   }
 
-
   confirmDelete() {
     const confirmed = window.confirm('Are you sure you want to delete this todo?');
     if (confirmed) {
       this.onDelete();
     }
   }
-  
+
   onDelete() {
-    console.log('Deleting todo with ID:', this.todoId); // Log the delete action
-  
     if (this.todoId) {
       this.todoService.deleteTodo(this.todoId).subscribe({
         next: () => {
           this.getAllTodos();
           this.onCloseSlidePanel();
+          this.notificationService.showMessage('Task deleted');
         },
         error: (error) => {
           console.error('Error deleting todo:', error);
@@ -127,11 +118,9 @@ export class TodoComponent implements OnInit {
       });
     }
   }
-  
 
   onLoadTodoForm(item: ITodo) {
-    this.todoId = item.id!!; // Use id for MongoDB
-    console.log('Loading todo with ID:', this.todoId); // Log the ID
+    this.todoId = item.id!!;
     this.todoForm.patchValue({
       title: item.title,
       description: item.description,
