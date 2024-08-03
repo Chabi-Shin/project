@@ -26,61 +26,44 @@ Installation
 Prerequisites
 Node.js (v14 or higher)
 MongoDB
+
 Backend Installation
 Clone the repository:
-
-bash
-Copy code
 git clone https://github.com/your-username/todo-app.git
 cd todo-app
-Install backend dependencies:
 
-bash
-Copy code
+Install backend dependencies:
 cd backend
 npm install
-Configure environment variables in app.js:
 
-javascript
-Copy code
+Configure environment variables in app.js:
 const DB_URI = 'mongodb://localhost:27017/project';
 const SECRET_KEY = 'your_secret_key';
-Start the backend server:
 
-bash
-Copy code
+Start the backend server:
 node app.js
+
 Frontend Installation
 Navigate to the frontend directory:
-
-bash
-Copy code
 cd ../frontend
+
 Install frontend dependencies:
-
-bash
-Copy code
 npm install
-Start the frontend development server:
 
-bash
-Copy code
+Start the frontend development server:
 ng serve
+
 The backend will be running on http://localhost:8000 and the frontend on http://localhost:4200.
 
 Running the Application
 Start the backend server:
-
-bash
-Copy code
 cd backend
 node app.js
-Start the frontend server:
 
-bash
-Copy code
+Start the frontend server:
 cd frontend
 ng serve
+
 Open a web browser and navigate to http://localhost:4200 to access the application.
 
 API Endpoints
